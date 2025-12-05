@@ -1,0 +1,3 @@
+../Core/Src/gimbal.c:11:6:Gimbal_Init	1
+../Core/Src/gimbal.c:22:6:Gimbal_SetAngles	1
+../Core/Src/gimbal.c:28:6:Gimbal_Center	1

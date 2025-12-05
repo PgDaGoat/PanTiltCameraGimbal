@@ -1,0 +1,4 @@
+../Core/Src/SERVO_cfg.c:4:17:Servo_PulseUsToTicks	2
+../Core/Src/SERVO_cfg.c:15:6:Servo_Init	1
+../Core/Src/SERVO_cfg.c:33:6:Servo_WriteUs	7
+../Core/Src/SERVO_cfg.c:45:6:Servo_WriteAngle	3

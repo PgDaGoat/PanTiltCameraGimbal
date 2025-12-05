@@ -1,0 +1,15 @@
+../Core/Src/main.c:49:13:ClampAngles	5
+../Core/Src/main.c:81:13:BT_StartReceive	1
+../Core/Src/main.c:86:13:BT_HandleFrame	7
+../Core/Src/main.c:110:13:BT_ProcessByte	12
+../Core/Src/main.c:164:13:PC_StartReceive	1
+../Core/Src/main.c:169:13:PC_HandleLine	6
+../Core/Src/main.c:199:13:PC_ProcessByte	5
+../Core/Src/main.c:232:6:HAL_UART_RxCpltCallback	3
+../Core/Src/main.c:253:5:main	6
+../Core/Src/main.c:348:6:SystemClock_Config	4
+../Core/Src/main.c:387:13:MX_TIM2_Init	7
+../Core/Src/main.c:441:13:MX_USART1_UART_Init	2
+../Core/Src/main.c:460:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:479:13:MX_GPIO_Init	1
+../Core/Src/main.c:501:6:Error_Handler	2

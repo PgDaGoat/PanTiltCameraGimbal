@@ -1,0 +1,15 @@
+../Core/Src/main.c:49:13:ClampAngles	8	static
+../Core/Src/main.c:81:13:BT_StartReceive	8	static
+../Core/Src/main.c:86:13:BT_HandleFrame	16	static
+../Core/Src/main.c:110:13:BT_ProcessByte	16	static
+../Core/Src/main.c:164:13:PC_StartReceive	8	static
+../Core/Src/main.c:169:13:PC_HandleLine	88	static
+../Core/Src/main.c:199:13:PC_ProcessByte	16	static
+../Core/Src/main.c:232:6:HAL_UART_RxCpltCallback	16	static
+../Core/Src/main.c:253:5:main	120	static
+../Core/Src/main.c:348:6:SystemClock_Config	128	static
+../Core/Src/main.c:387:13:MX_TIM2_Init	48	static
+../Core/Src/main.c:441:13:MX_USART1_UART_Init	8	static
+../Core/Src/main.c:460:13:MX_USART2_UART_Init	8	static
+../Core/Src/main.c:479:13:MX_GPIO_Init	48	static
+../Core/Src/main.c:501:6:Error_Handler	16	static,ignoring_inline_asm
