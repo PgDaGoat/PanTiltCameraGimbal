@@ -34,11 +34,8 @@ static float tiltAngle = 90.0f;
 static volatile float targetPan  = 90.0f;
 static volatile float targetTilt = 90.0f;
 static volatile uint8_t pc_cmd_pending = 0;
+static volatile uint8_t bt_cmd_pending = 0;
 
-
-/* Servo objects */
-static Servo_t panServo;
-static Servo_t tiltServo;
 
 /* Debug counters */
 static uint32_t uart1_rx_count = 0;
@@ -103,9 +100,15 @@ static void BT_HandleFrame(const char *id, const char *value)
     }
 
     ClampAngles();
-    Gimbal_SetAngles(panAngle, tiltAngle);
+
+    // store into targets and set flag – main loop will move the servos
+    targetPan  = panAngle;
+    targetTilt = tiltAngle;
+    bt_cmd_pending = 1;
+
     commands_processed++;
 }
+
 
 static void BT_ProcessByte(uint8_t byte)
 {
@@ -274,14 +277,9 @@ int main(void)
   }
 
   HAL_Delay(500);
-
-  // Initialize servos
-  Servo_Init(&panServo,  &htim2, TIM_CHANNEL_1, 1300, 1700);
-  Servo_Init(&tiltServo, &htim2, TIM_CHANNEL_2, 1300, 1700);
-
-  // Start servos at center
-  Servo_WriteAngle(&panServo, 90.0f);
-  Servo_WriteAngle(&tiltServo, 90.0f);
+  // Initialize gimbal (servos)
+  Gimbal_Init();
+  Gimbal_Center();   // 90°, 90°
 
   HAL_Delay(500);
 
@@ -309,25 +307,30 @@ int main(void)
   uint32_t last_blink = 0;
   while (1)
   {
-      // Heartbeat LED
+      // Slow heartbeat blink (every 1 second)
       if (HAL_GetTick() - last_blink > 1000)
       {
           HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
           last_blink = HAL_GetTick();
       }
 
-      // NEW: apply PC command if pending
-      if (pc_cmd_pending)
+      // Apply any pending command from PC or BT
+      if (pc_cmd_pending || bt_cmd_pending)
       {
+          __disable_irq();
           pc_cmd_pending = 0;
+          bt_cmd_pending = 0;
+          float p = targetPan;
+          float t = targetTilt;
+          __enable_irq();
 
-          panAngle  = targetPan;
-          tiltAngle = targetTilt;
+          panAngle  = p;
+          tiltAngle = t;
           ClampAngles();
           Gimbal_SetAngles(panAngle, tiltAngle);
       }
 
-      // Debug every 5 seconds
+      // Optional: Send debug info every 5 seconds
       static uint32_t last_debug = 0;
       if (HAL_GetTick() - last_debug > 5000)
       {
@@ -340,7 +343,6 @@ int main(void)
 
       HAL_Delay(10);
   }
-
 }
 
 /* ================== System Configuration ================== */
