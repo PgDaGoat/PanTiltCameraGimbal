@@ -2,7 +2,7 @@
 /**
   ******************************************************************************
   * @file           : main.c
-  * @brief          : Main program body – Pan/Tilt with DEBUG LED feedback
+  * @brief          : Main program body â€“ Pan/Tilt with DEBUG LED feedback
   ******************************************************************************
   * LED FEEDBACK CODES:
   * - 3 quick blinks at startup = System initialized OK
@@ -101,7 +101,7 @@ static void BT_HandleFrame(const char *id, const char *value)
 
     ClampAngles();
 
-    // store into targets and set flag – main loop will move the servos
+    // store into targets and set flag â€“ main loop will move the servos
     targetPan  = panAngle;
     targetTilt = tiltAngle;
     bt_cmd_pending = 1;
@@ -171,14 +171,41 @@ static void PC_StartReceive(void)
 
 static void PC_HandleLine(const char *line)
 {
-    int panInt, tiltInt;
+    int panInt = 0, tiltInt = 0;
+    int count;
 
-    if (sscanf(line, "%d,%d", &panInt, &tiltInt) == 2)
+    // Try "PAN,TILT"
+    count = sscanf(line, "%d,%d", &panInt, &tiltInt);
+
+    // Also accept "PAN TILT" (space separated)
+    if (count != 2)
+    {
+        count = sscanf(line, "%d %d", &panInt, &tiltInt);
+    }
+
+    // If only one number, treat it as pan only; keep tiltAngle as-is
+    if (count == 1)
+    {
+        float p = (float)panInt;
+
+        if (p < 0.0f)   p = 0.0f;
+        if (p > 180.0f) p = 180.0f;
+
+        targetPan  = p;
+        targetTilt = tiltAngle;   // donâ€™t change tilt
+        pc_cmd_pending = 1;
+        commands_processed++;
+
+        HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+        return;
+    }
+
+    // If we got both pan and tilt:
+    if (count == 2)
     {
         float p = (float)panInt;
         float t = (float)tiltInt;
 
-        // Clamp before storing
         if (p < 0.0f)   p = 0.0f;
         if (p > 180.0f) p = 180.0f;
         if (t < 0.0f)   t = 0.0f;
@@ -186,17 +213,17 @@ static void PC_HandleLine(const char *line)
 
         targetPan  = p;
         targetTilt = t;
-        pc_cmd_pending = 1;    // tell main loop to move servos
-
+        pc_cmd_pending = 1;
         commands_processed++;
 
-        // LED on to show we got *a* command
         HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
-        char buf[32];
-                int n = snprintf(buf, sizeof(buf), "OK %d,%d\r\n", panInt, tiltInt);
-                HAL_UART_Transmit(&huart2, (uint8_t*)buf, n, 100);
     }
+
+    // If count == 0, do nothing (bad line)
 }
+
+
+
 
 
 static void PC_ProcessByte(uint8_t byte)
@@ -276,10 +303,10 @@ int main(void)
       HAL_Delay(200);
   }
 
-  HAL_Delay(500);
+ HAL_Delay(500);
   // Initialize gimbal (servos)
   Gimbal_Init();
-  Gimbal_Center();   // 90°, 90°
+  Gimbal_Center();   // 90Â°, 90Â°
 
   HAL_Delay(500);
 
@@ -326,7 +353,7 @@ int main(void)
 
           panAngle  = p;
           tiltAngle = t;
-          ClampAngles();
+          //ClampAngles();
           Gimbal_SetAngles(panAngle, tiltAngle);
       }
 

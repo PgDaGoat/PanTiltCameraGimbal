@@ -19,7 +19,7 @@ void Gimbal_Init(void)
     //Gimbal_Center();
 }
 
-void Gimbal_SetAngles(float panDeg, float tiltDeg)
+void Gimbal_SetAngles(int panDeg, int tiltDeg)
 {
     Servo_WriteAngle(&gimbal.pan,  panDeg);
     Servo_WriteAngle(&gimbal.tilt, tiltDeg);
@@ -27,5 +27,5 @@ void Gimbal_SetAngles(float panDeg, float tiltDeg)
 
 void Gimbal_Center(void)
 {
-    Gimbal_SetAngles(90.0f, 90.0f);
+    Gimbal_SetAngles(90, 90);
 }

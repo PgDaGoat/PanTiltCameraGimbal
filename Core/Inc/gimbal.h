@@ -10,7 +10,7 @@ typedef struct {
 } Gimbal_t;
 
 void Gimbal_Init(void);
-void Gimbal_SetAngles(float panDeg, float tiltDeg);
+void Gimbal_SetAngles(int panDeg, int tiltDeg);
 void Gimbal_Center(void);
 
 #endif // GIMBAL_H
